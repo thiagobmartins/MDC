@@ -36,17 +36,21 @@ acumLim <- sum(dadosLim[, 3]); acumLim
 acumVin <- sum(dadosVin[, 3]); acumVin
 
 ## Você deve salvar nas variáveis dmaxCamp, dmaxLim e dmaxVin, dentre os dados existentes em seu data frame, o dia do mês com maior leitura de chuva nas cidades de Campinas, Limeira e Vinhedo, respectivamente. Se existir mais de um dia com o valor máximo, você pode escolher qualquer um dos dias. Caso uma cidade não tenha leitura em algum dia, aquele dia deve ser ignorado.
-dmaxCamp <- dadosCamp[max(rank(dadosCamp[, 3])), ][[1]]; dmaxCamp
-dmaxLim <- dadosLim[max(rank(dadosLim[, 3])), ][[1]]; dmaxLim
-dmaxVin <- dadosVin[max(rank(dadosVin[, 3])), ][[1]]; dmaxVin
+pos_menor_val_camp =  order(dadosCamp[, 3])[1]
+pos_menor_val_lim = order(dadosLim[, 3])[1]
+pos_menor_val_vin = order(dadosVin[, 3])[1]
+
+dmaxCamp <- dadosCamp[pos_menor_val_camp, ][[1]]; dmaxCamp
+dmaxLim <- dadosLim[pos_menor_val_lim, ][[1]]; dmaxLim
+dmaxVin <- dadosVin[pos_menor_val_vin, ][[1]]; dmaxVin
 
 
 ## Você deve salvar nas variáveis dminCamp, dminLim e dminVin, dentre os dados existentes em seu data frame, o dia do mês com menor leitura de chuva nas cidades de Campinas, Limeira e Vinhedo, respectivamente. Se existir mais de um dia com o valor mínimo, você pode escolher qualquer um dos dias. Caso uma cidade não tenha leitura em algum dia, aquele dia deve ser ignorado.
-posicao_maior_valor_campinas =  order(dadosCamp[, 3])[length(order(dadosCamp[, 3]))]
-posicao_maior_valor_limeira = order(dadosLim[, 3])[length(order(dadosLim[, 3]))]
-posicao_maior_valor_vinhedo = order(dadosVin[, 3])[length(order(dadosLim[, 3]))]
+pos_maior_val_camp =  order(dadosCamp[, 3])[length(order(dadosCamp[, 3]))]
+pos_maior_val_lim = order(dadosLim[, 3])[length(order(dadosLim[, 3]))]
+pos_maior_val_vin = order(dadosVin[, 3])[length(order(dadosLim[, 3]))]
 
-dminCamp <- dadosCamp[posicao_maior_valor_campinas, ][[1]]; dminCamp
-dminLim <- dadosLim[posicao_maior_valor_limeira, ][[1]]; dminLim
-dminVin <- dadosVin[posicao_maior_valor_vinhedo, ][[1]]; dminVin
+dminCamp <- dadosCamp[pos_maior_val_camp, ][[1]]; dminCamp
+dminLim <- dadosLim[pos_maior_val_lim, ][[1]]; dminLim
+dminVin <- dadosVin[pos_maior_val_vin, ][[1]]; dminVin
   
