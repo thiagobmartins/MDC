@@ -19,25 +19,34 @@ chuva <- c(0.15, 0.02, 0.01, 0.13, 0.12, 2.19, 1.11, 0.76, 2.98, 0.45, 2.63, 0.7
 
 ## Perguntas:
 ## Você deve criar, na variável leituras, um data frame utilizando os vetores fornecidos e, sempre que utilizar algum dado desses vetores, referir-se apenas a esse data frame (ou seja, você só pode utilizar os vetores fornecidos para criar esse data frame).
-leituras <-
+leituras <- data.frame(dia, cidade, chuva); leituras
 
 
 ## Você deve remover do data frame leituras todas as linhas $i$ tais que exista uma linha $j$ com $j > i$ e que os campos contendo dia e cidade sejam o mesmo em $i$ e $j$.
-leituras <- 
+leituras <- leituras[!duplicated(leituras[, c(1,2)], fromLast = TRUE),]
 
 
 ## Salve nas variáveis acumCamp, acumLim e acumVin o total de chuvas observados nos 15 dias nas cidades de Campinas, Limeira e Vinhedo, respectivamente.
-acumCamp <-
-acumLim <-
-acumVin <-
+dadosCamp <- leituras[leituras$cidade == "Campinas", ]
+dadosLim <- leituras[leituras$cidade == "Limeira", ]
+dadosVin <- leituras[leituras$cidade == "Vinhedo", ]
+
+acumCamp <- sum(dadosCamp[, 3]); acumCamp
+acumLim <- sum(dadosLim[, 3]); acumLim
+acumVin <- sum(dadosVin[, 3]); acumVin
 
 ## Você deve salvar nas variáveis dmaxCamp, dmaxLim e dmaxVin, dentre os dados existentes em seu data frame, o dia do mês com maior leitura de chuva nas cidades de Campinas, Limeira e Vinhedo, respectivamente. Se existir mais de um dia com o valor máximo, você pode escolher qualquer um dos dias. Caso uma cidade não tenha leitura em algum dia, aquele dia deve ser ignorado.
-dmaxCamp <-
-dmaxLim <-
-dmaxVin <-
+dmaxCamp <- dadosCamp[max(rank(dadosCamp[, 3])), ][[1]]; dmaxCamp
+dmaxLim <- dadosLim[max(rank(dadosLim[, 3])), ][[1]]; dmaxLim
+dmaxVin <- dadosVin[max(rank(dadosVin[, 3])), ][[1]]; dmaxVin
 
 
 ## Você deve salvar nas variáveis dminCamp, dminLim e dminVin, dentre os dados existentes em seu data frame, o dia do mês com menor leitura de chuva nas cidades de Campinas, Limeira e Vinhedo, respectivamente. Se existir mais de um dia com o valor mínimo, você pode escolher qualquer um dos dias. Caso uma cidade não tenha leitura em algum dia, aquele dia deve ser ignorado.
-dminCamp <-
-dminLim <-
-dminVin <-
+posicao_maior_valor_campinas =  order(dadosCamp[, 3])[length(order(dadosCamp[, 3]))]
+posicao_maior_valor_limeira = order(dadosLim[, 3])[length(order(dadosLim[, 3]))]
+posicao_maior_valor_vinhedo = order(dadosVin[, 3])[length(order(dadosLim[, 3]))]
+
+dminCamp <- dadosCamp[posicao_maior_valor_campinas, ][[1]]; dminCamp
+dminLim <- dadosLim[posicao_maior_valor_limeira, ][[1]]; dminLim
+dminVin <- dadosVin[posicao_maior_valor_vinhedo, ][[1]]; dminVin
+  
