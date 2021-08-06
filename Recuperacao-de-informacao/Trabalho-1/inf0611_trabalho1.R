@@ -4,8 +4,8 @@
 # Trabalho 1 - Recuperação de Texto                                  #
 ######################################################################
 # Nome COMPLETO dos integrantes do grupo:                            #
-#   -                                                                #
-#   -                                                                #
+#   - Thiago Bruschi Martins                                         #
+#   - Dani Ribeiro                                                   #
 #   -                                                                #
 #                                                                    #
 ######################################################################
@@ -53,28 +53,28 @@ docs <- process_data("time.txt", "XX-Text [[:alnum:]]", "Article_0",
 queries <- process_data("queries.txt", "XX-Find [[:alnum:]]", 
                         "Query_0", convertcase = TRUE, 
                         remove_stopwords = FALSE)
+
 # Visualizando as consultas (apenas para debuging)
-# head(queries)
+ head(queries)
 # Exemplo de acesso aos tokens de uma consulta
-# q1 <- queries[queries$doc_id == "Query_01",]; q1
+ q1 <- queries[queries$doc_id == "Query_01",]; q1
 
 # Lendo uma lista de vetores de ground_truth
 ground_truths <- read.csv("relevance.csv", header = TRUE)
 
 # Visualizando os ground_truths (apenas para debuging)
-# head(ground_truths)
+ head(ground_truths)
 # Exemplo de acesso vetor de ground_truth da consulta 1:
-# ground_truths[1,]
+ ground_truths[1,]
 # Exemplo de impressão dos ids dos documentos relevantes da consulta 1:
 # Visualizando o ranking (apenas para debuging)
-# names(ground_truths)[ground_truths[1,]==1]
-
+ names(ground_truths)[ground_truths[1,]==1]
 
 # Computando a matriz de termo-documento
-term_freq <- document_term_frequencies(...)
+term_freq <- document_term_frequencies(docs, term = "word", document="doc_id")
 
 # Computando as estatísticas da coleção e convertendo em data.frame
-docs_stats <- as.data.frame(document_term_frequencies_statistics(...))
+docs_stats <- as.data.frame(document_term_frequencies_statistics(term_freq))
 # Visualizando as estatísticas da coleção (apenas para debuging)
 # head(docs_stats)
 

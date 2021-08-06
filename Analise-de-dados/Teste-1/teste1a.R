@@ -1,6 +1,9 @@
 ########################################
 # Teste 1a - INF-0612          
-# Nome(s): 
+# Nome(s):
+# - Thiago Bruschi Martins
+# - Dani Ribeiro
+# - Rodrigo
 ########################################
 
 ## Os vetores C, L e V representam os produtos distribuidos nas cidades de Campinas, Limeira e Vinhedo, respectivamente.
