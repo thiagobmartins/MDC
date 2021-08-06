@@ -1,6 +1,9 @@
 ########################################
 # Teste 1c - INF-0612          
 # Nome(s): 
+# - Thiago Bruschi Martins
+# - Dani Ribeiro
+# - Rodrigo
 ########################################
 
 

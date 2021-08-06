@@ -6,7 +6,7 @@
 # Nome COMPLETO dos integrantes do grupo:                            #
 #   - Thiago Bruschi Martins                                         #
 #   - Dani Ribeiro                                                   #
-#   -                                                                #
+#   - Rodrigo                                                        #
 #                                                                    #
 ######################################################################
 
@@ -108,22 +108,19 @@ computa_resultados <- function(query, ground_truth, stats, stat_name,
   p <- precision(ground_truth, ranking[, 1], top)
 
   # Calculando a revocação
-  r <- recall(ground_truth, ranking[, 1], top)
+  r <- recall(ground_truth, ranking$doc_id, top)
 
   # Imprimindo os valores de precisão e revocação
   cat(paste("Consulta: ", query[1,1], "\nPrecisão: ", p, 
             "\tRevocação: ", r, "\n"))
   
   # Gerando o plot Precisão + Revocação (função do arquivo base)
-  plot_prec_e_rev(ranking, ground_truth, top, text) 
+  plot_prec_e_rev(ranking$doc_id, ground_truth, top, text) 
 }
 
 # Definindo a consulta 1 
- 
-ranking <- get_ranking_by_stats("tf_idf", docs_stats, queries[[2]])
- 
-consulta1 <- computa_resultados(queries, ground_truths, docs_stats, "tf_idf", 10, "Primeiro")
-n_consulta1 <- ...
+consulta1 <- queries[queries$doc_id=="Query_01", ]
+n_consulta1 <- 1
 
 ## Exemplo de uso da função computa_resultados:
 # computa_resultados(consulta1, ground_truths[n_consulta1, ], 
@@ -131,10 +128,10 @@ n_consulta1 <- ...
 #                    top = 15, "titulo")
 
 # Resultados para a consulta 1 e tf_idf
-computa_resultados(...)
+computa_resultados(consulta1, ground_truths[n_consulta1, ], docs_stats, "tf_idf", 10, "TF-IDF")
 
 # Resultados para a consulta 1 e bm25
-computa_resultados(...)
+computa_resultados(consulta1, ground_truths[n_consulta1, ], docs_stats, "bm25", 10, "BM25")
 
 
 # Definindo a consulta 2 
