@@ -28,9 +28,9 @@ alunos <- data.frame(p1, p2, p3, p4)
 #row.names(alunos) <- ids
 
 ## Você deve salvar no vetor medquad a média final de cada aluno (média quadrática das provas, desconsiderando a menor nota obtida), com duas casas decimais.
-# Primeiro precisamos ordenar as notas, e depois realizar as contas com os 3 �ltimos valores
-notas_ordenadas <- t(apply(alunos, 1, sort)) 
-media <- round(((notas_ordenadas[,2]^2 + notas_ordenadas[,3]^2 + notas_ordenadas[,4]^2)/3)^0.5, digits = 2)
+# Primeiro precisamos ordenar as notas, e depois realizar as contas com os 3 ?ltimos valores
+
+media <- round(((alunos["p1"]^2 + alunos["p2"]^2 + alunos["p3"]^2 + alunos["p4"]^2 - rowMins(alunos)^2)/3)^0.5, digits = 2)
 medquad <- data.frame(media, row.names = ids); medquad
 
 
