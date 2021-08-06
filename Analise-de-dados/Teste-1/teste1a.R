@@ -18,12 +18,10 @@ setdiff(C, L)
 setdiff(V, C)
 
 ## Quais os produtos que sao vendidos em pelo menos uma cidade?
-C_L <- union(C, L)
-total <- union(C_L, V); total
+total <- union(union(C, L), V); total
 
 ## Quais os produtos que sao vendidos em todas as cidades?
-C_and_L <- intersect(C, L)
-intersect(C_and_L, V)
+intersect(intersect(C, L), V)
 
 ## Se a filial de Limeira parar a distribuicao de produtos, a filial de Campinas 
 ## possui todos os itens necessarios para atender a demanda de Limeira? 
