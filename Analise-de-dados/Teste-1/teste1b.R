@@ -31,8 +31,8 @@ alunos <- data.frame(p1, p2, p3, p4)
 #row.names(alunos) <- ids
 
 ## Você deve salvar no vetor medquad a média final de cada aluno (média quadrática das provas, desconsiderando a menor nota obtida), com duas casas decimais.
-media <- round(sqrt((rowSums(alunos^2) - rowMins(alunos)^2)/3), digits = 2)
-medquad <- data.frame(media, row.names = ids); head(medquad)
+media <- sqrt((rowSums(alunos^2) - rowMins(alunos)^2)/3)
+medquad <- round(media, digits = 2); head(medquad)
 
 
 ## Você deve salvar nas variáveis mp1, mp2, mp3 e mp4 a média aritmética das notas das provas 1, 2, 3 e 4, respectivamente.

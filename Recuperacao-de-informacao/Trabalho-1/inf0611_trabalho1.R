@@ -76,7 +76,7 @@ term_freq <- document_term_frequencies(docs, term = "word", document="doc_id")
 # Computando as estatísticas da coleção e convertendo em data.frame
 docs_stats <- as.data.frame(document_term_frequencies_statistics(term_freq))
 # Visualizando as estatísticas da coleção (apenas para debuging)
-# head(docs_stats)
+ head(docs_stats)
 
 ######################################################################
 #
@@ -98,26 +98,31 @@ docs_stats <- as.data.frame(document_term_frequencies_statistics(term_freq))
 computa_resultados <- function(query, ground_truth, stats, stat_name, 
                                top, text) {
   # Criando ranking (função do arquivo base)
-  ranking <- get_ranking_by_stats(...)
+  ranking <- get_ranking_by_stats(stat_name, stats, query[[2]])
+  
+  head(ranking)
   # Visualizando o ranking (apenas para debuging)
   # head(ranking, n = 5)
   
   # Calculando a precisão
-  p <- ...
+  p <- precision(ground_truth, ranking[, 1], top)
 
   # Calculando a revocação
-  r <- ...
+  r <- recall(ground_truth, ranking[, 1], top)
 
   # Imprimindo os valores de precisão e revocação
   cat(paste("Consulta: ", query[1,1], "\nPrecisão: ", p, 
             "\tRevocação: ", r, "\n"))
   
   # Gerando o plot Precisão + Revocação (função do arquivo base)
-  plot_prec_e_rev(...) 
+  plot_prec_e_rev(ranking, ground_truth, top, text) 
 }
 
 # Definindo a consulta 1 
-consulta1 <- ...
+ 
+ranking <- get_ranking_by_stats("tf_idf", docs_stats, queries[[2]])
+ 
+consulta1 <- computa_resultados(queries, ground_truths, docs_stats, "tf_idf", 10, "Primeiro")
 n_consulta1 <- ...
 
 ## Exemplo de uso da função computa_resultados:
