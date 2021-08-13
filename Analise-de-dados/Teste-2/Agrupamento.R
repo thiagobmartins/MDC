@@ -21,8 +21,7 @@ df <- data.frame(dia, cidade, chuva)
 
 groupsum <- function(df, colgroup, colsum){
    teste <- tapply(df[[colsum]], df[[colgroup]], sum)
-   novo_df <- data.frame(teste)
-   novo_df[[colgroup]] <- rownames(novo_df)
+   novo_df <- data.frame(rownames(teste), teste)
    names(novo_df)[1] <- colsum
    rownames(novo_df) <- NULL
   return(novo_df)
