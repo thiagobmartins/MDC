@@ -27,5 +27,7 @@ binToDec <- function(...){
   return(conjuntoResposta)
 }
 
-# Teste
-binToDec(c(1,0,1,0), c(1,0))
+##### Exemplos no PDF:
+binToDec(c(1, 0))
+binToDec(c(0, 0, 1), c(1, 1))
+binToDec(rep(1, 3), rep(0, 2), rep(c(1,0), 2))
