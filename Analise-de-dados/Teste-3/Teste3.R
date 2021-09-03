@@ -167,7 +167,7 @@ ggplot(cepagri_inverno, aes(x=vento, y=temp)) +
   cepagri_2019 |> group_by(estacao) |>
     summarize(mean(temp), sd(temp))
 
-# Análise 4) Temporal
+# Análise 4) Diferenca entre temperatura e sensacao termica
   cepagri[, 'diferenca'] <- cepagri$temp - cepagri$sensa
   
   cepagri_4 <- filter(cepagri, ano == 2018)
