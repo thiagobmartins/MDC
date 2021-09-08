@@ -5,3 +5,4 @@
 *.tar.gz
 *.RData
 *.Rhistory
+*.csv
