@@ -15,22 +15,8 @@ getHypothesis <- function(feature_names, degree=1){
   return(hypothesis)
 }
 
-getHypothesis_gabriel <- function(feature_names, degree){
-  
-  hypothesis_string <- "hypothesis <- formula(label ~ "
-  for(d in 1:degree){
-    for(i in 1:length(feature_names)){
-      hypothesis_string <- paste(hypothesis_string, 
-                                 "I(", feature_names[i], "^", d, ") + ",
-                                 sep = "")
-    }
-  }
-  hypothesis_string <- substr(hypothesis_string, 1, nchar(hypothesis_string)-3)
-  hypothesis_string <- paste(hypothesis_string, ")")
-  hypothesis <- eval(parse(text=hypothesis_string))
-  return(hypothesis)
-}
-
+# Funcao que treina uma arvore de desicao
+# Gera pesos automaticamente para o balaceamento da arvore
 treina_arvore_weights <- function(data, maxDepth=30){
   pesos = gera_pesos(data)
   tree <- rpart(formula=label ~ ., data=data, method="class", weights=pesos,
@@ -40,15 +26,9 @@ treina_arvore_weights <- function(data, maxDepth=30){
   return(tree)
 }
 
-treina_arvore_features <- function(data, features, w){
-  pesos = gera_pesos(data)
-  tree <- rpart(formula=getHypothesis(features), data=data, method="class", # weights=pesos,
-                control=rpart.control(minsplit=2, cp=0.0, xval = 10, maxdepth=30),
-                parms= list(split="information"))
-  
-  return(tree)
-}
 
+# Funcao que gera os pesos para as classes de um determinado dataset
+# Os pesos gerados sao inversamente proporcionais a frequencia de cada classe
 gera_pesos <- function(data)
 {
   (classes_frequency <- table(data$label))
@@ -62,6 +42,8 @@ gera_pesos <- function(data)
   return(pesos)
 }
 
+# Funcao que calcula a acuracia balanceada de um 
+# determinado modelo em um determinado dataset
 acc_bal <- function(treeModel, data)
 {
   pred <- predict(treeModel, data, type="class")
@@ -73,6 +55,8 @@ acc_bal <- function(treeModel, data)
   return((cm_relative[1,1] + cm_relative[2,2] + cm_relative[3,3])/3)
 }
 
+# Funcao que gera a matriz de confusao relativa nos conjuntos de treino
+# e de validacao para um determinado modelo
 matriz_confusao_relativa <- function(treeModel, data_train, data_val)
 {
   # Avaliando no conjunto de treino
@@ -109,6 +93,8 @@ matriz_confusao_relativa <- function(treeModel, data_train, data_val)
  return(acc_bal_val)
 }
 
+# Funcao que gera a matriz de confusao relativa e  acuracia 
+# balanceada no conjunto de teste
 testa_modelo <- function(treeModel, data_test)
 {
   
@@ -129,7 +115,6 @@ testa_modelo <- function(treeModel, data_test)
   
 }
 
-
 # Funcao que calcula a matriz de confusao relativa para 3 classes
 calculaMatrizConfusaoRelativa <- function(cm){
   
@@ -147,28 +132,7 @@ calculaMatrizConfusaoRelativa <- function(cm){
   return(cm_relative)  
 }
 
-vies_variancia <- function(acc_train, acc_val, acc_val_baseline, nome){
-  
-  ggplot(acc_train, xlab="MaxDepth", ylab="Acurácia Balanceada", 
-       pch="+", col="blue",  xaxt="n", 
-       ylim=c(min(c(acc_train, acc_val, acc_val_baseline)),
-              max(c(acc_train, acc_val, acc_val_baseline))))
-  
-  
-  axis(1, at=1:length(depths), labels=depths, las=1)
-  
-  points(acc_val, pch="*", col="red")
-  
-  points(rep(acc_val_baseline, length(acc_depths_train)), pch="o", col="green")
-  
-  lines(acc_train, col="blue", lty=2)
-  lines(acc_val, col="red", lty=2)
-  lines(rep(acc_val_baseline, length(acc_depths_train)), col="green", lty=2)
-  
-  legend('bottomright', 1, 0.6234, legend=c("V - Baseline", paste("T -", nome), paste("V -", nome)), 
-         col=c("green", "blue","red"), lty=2, cex=0.7, inset = 0.1)
-}
-
+# Funcao que gera o grafico de vies e variancia para variacao de profundidade
 vies_variancia_depth <- function(data, nome){
 g <- ggplot(data=data, aes(x=depth, y=acc_bal, colour=Dados)) +
     geom_line() +
@@ -184,6 +148,7 @@ g <- ggplot(data=data, aes(x=depth, y=acc_bal, colour=Dados)) +
   return(g)
 }
 
+# Funcao que gera o grafico de vies e variancia para variacao de features
 vies_variancia_features <- function(data, nome){
   g <- ggplot(data=data, aes(x=n_features, y=acc_bal, colour=Dados)) +
     geom_line() +
@@ -198,27 +163,24 @@ vies_variancia_features <- function(data, nome){
    return(g)
 }
 
-varia_depth <- function(data, depths){
-  acc_depths_train <- c()
-  acc_depths_val <- c()
-  
-  for (depth in depths){
-    model <- rpart(formula=label ~ ., data=data, method="class", 
-                   control=rpart.control(minsplit=2, cp=0.0, xval = 10, maxdepth = depth),
-                   parms= list(split="information"))
-    
-    acc_depths_train <- append(acc_depths_train, acc_bal(model, data))
-    acc_depths_val <- append(acc_depths_val, acc_bal(model, dataVal))
-  }
-  
-  
- d1 <- data.frame( depth=depths, acc_bal=acc_depths_train, Dados='Treino')
- d2 <- data.frame( depth=depths, acc_bal=acc_depths_val, Dados='Validacao')
- d3 <- data.frame( depth=depths, acc_bal=rep(acc_val_baseline, length(depth), Dados='Baseline'))
- d4 <- rbind(d1, d2)
- return(rbind(d4,d3))
+# Funcao que gera o grafico de vies e variancia para variacao de features
+vies_variancia_ntrees <- function(data, nome){
+  x_min <- min(data[1])
+  x_max <- max(data[1])
+  y_min <- min(data[2])
+  y_max <- max(data[2])
+  g <- ggplot(data=data, aes(x=n_trees, y=acc_bal, colour=Dados)) +
+    geom_line() +
+    geom_point() +
+    ggtitle(nome) +
+    xlab("Numero de Arvores") +
+    scale_x_continuous(limits=c(x_min,x_max),breaks=seq(x_min,x_max,2)) +
+    scale_y_continuous(limits=c(y_min,y_max), breaks=seq(y_min,y_max,0.02)) +
+    theme(legend.position = c(0.8, 0.2)) +
+    scale_color_manual(values=c("chartreuse1", "blue", "red")) +
+    ylab("Acuracia Balanceada")
+  return(g)
 }
-
 
 varia_depth_w <- function(data, depths, feature_names, acc_val_baseline){
   acc_depths_train <- c()
@@ -243,19 +205,17 @@ varia_depth_w <- function(data, depths, feature_names, acc_val_baseline){
   return(rbind(d1,d2,d3))
 }
 
-avalia_teste <- function(model, dataTest) {
-  test_pred <- predict(model, dataTest, type="class")
-  cm_test <- confusionMatrix(data = as.factor(test_pred), 
-                                      reference = as.factor(dataTest$label), 
-                                      positive='yes')
-  
-  cm_relative_test <- calculaMatrizConfusaoRelativa(cm_test)
-  acc_bal_test <- round((cm_relative_test[1,1] + cm_relative_test[2,2]  + cm_relative_test[3,3])/3, 3)
-  
-  
-  print(paste('Acuracia Balanceada no Teste', acc_bal_test))
-  cat('\n')
-  print('Matriz de Confusao Relativa do Teste')
-  cat('\n')
-  print(cm_relative_test)
+
+vies_variancia_rf <- function(data, nome){
+  g <- ggplot(data=data, aes(x=n_trees, y=acc_bal, colour=Dados)) +
+    geom_line() +
+    geom_point() +
+    ggtitle(nome) +
+    xlab("Numero de Arvores") +
+    scale_x_continuous(limits=c(2,13),breaks=seq(2,13,2)) +
+    scale_y_continuous(limits=c(0.70,1.00), breaks=seq(0.70,1.00,0.02)) +
+    theme(legend.position = c(0.8, 0.2)) +
+    scale_color_manual(values=c("chartreuse1", "blue", "red")) +
+    ylab("Acuracia Balanceada")
+  return(g)
 }

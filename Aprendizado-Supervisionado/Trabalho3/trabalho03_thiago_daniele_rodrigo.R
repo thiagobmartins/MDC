@@ -138,7 +138,7 @@ matriz_confusao_relativa(model_under, dataTrainUnder, dataVal)
 acc_val_baseline <- acc_bal(model_under, dataVal)
 
 ### Avaliando no Conjunto de teste ####
-acc_bal_test_baseline <- avalia_teste(baseline, test_set)
+acc_bal_test_baseline <- testa_modelo(baseline, test_set)
 
 ######## QUESTAO 3) Aumentando a profundidade ################
 # Para fins de comparação vamos testar todas as profundidades possiveis
@@ -157,7 +157,7 @@ vies_variancia_depth(results_depth_under_w, "Diagnostico de Vies e Variancia")
 
 ## Ponto otimo 
 best_depth <- treina_arvore_weights(dataTrainUnder, 7)
-acc_bal_test_baseline <- avalia_teste(best_depth, test_set)
+acc_bal_test_baseline <- testa_modelo(best_depth, test_set)
 
 
 #### QUESTAO 4) Selecao de features
@@ -192,11 +192,12 @@ for (f in features_interval){
     acc_featsel_val_7 <- append(acc_featsel_val_7, acc_bal(model, dataVal))
 }
 
-d1 <- data.frame( n_features=features_interval, acc_bal=acc_featsel_train_7, Dados='Treino')
-d2 <- data.frame( n_features=features_interval, acc_bal=acc_featsel_val_7, Dados='Validacao')
-d3 <- data.frame( n_features=features_interval, acc_bal=rep(acc_val_baseline, length(features_interval)), Dados='Baseline')
+d1 <- data.frame( n_trees=features_interval, acc_bal=acc_featsel_train_7, Dados='Treino')
+d2 <- data.frame( n_trees=features_interval, acc_bal=acc_featsel_val_7, Dados='Validacao')
+d3 <- data.frame( n_trees=features_interval, acc_bal=rep(acc_val_baseline, length(features_interval)), Dados='Baseline')
 
 df_feat_selection_7 <- rbind(d1, d2, d3)
+library("support_functions.R")
 vies_variancia_features(df_feat_selection_7, "Diagnostico de Vies e Variancia pelo numero de features")
 testa_modelo(model, test_set)
 
@@ -208,8 +209,29 @@ testa_modelo(model, test_set)
 
 
 ########## Questao 5) Variando o numero de arvores ################
+library(randomForest)
 
-rfModel <- randomForest(formula=class ~ variance + skewness 
-                        + curtosis + entropy, 
-                        data= dataTrainUnder, ntree=100)
 
+ntrees_interval <- seq(1,40, 2)
+acc_rf_train <- c()
+acc_rf_val <- c()
+for (n_tree in ntrees_interval) {
+  
+  rfModel <- randomForest(formula=label ~ ., data= dataTrainUnder,
+                          ntree=n_tree, mtry=((dim(dataTrainUnder)[2]-1) * 0.3))
+  
+  acc_rf_train <- append(acc_rf_train, round(acc_bal(rfModel, dataTrainUnder), 2))
+  acc_rf_val <- append(acc_rf_val, round(acc_bal(rfModel, dataVal), 2))
+  
+}
+
+d1 <- data.frame( n_trees=ntrees_interval, acc_bal=acc_rf_train, Dados='Treino')
+d2 <- data.frame( n_trees=ntrees_interval, acc_bal=acc_rf_val, Dados='Validacao')
+d3 <- data.frame( n_trees=ntrees_interval, acc_bal=rep(acc_val_baseline, length(ntrees_interval)), Dados='Baseline')
+df_rf <- rbind(d1, d2, d3)
+vies_variancia_ntrees(df_rf, "Diagnostico de Vies e Variancia pelo numero de Arvores")
+
+best_rf <- randomForest(formula=label ~ ., data= dataTrainUnder,
+                        ntree=7, mtry=((dim(dataTrainUnder)[2]-1) * 0.3))
+
+testa_modelo(best_rf, test_set)
