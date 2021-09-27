@@ -6,3 +6,5 @@
 *.RData
 *.Rhistory
 *.csv
+*.PNG
+*.JPEG
