@@ -1,0 +1,60 @@
+---
+title: "INF0613 -- Aprendizado de Máquina Não Supervisionado"
+output: pdf_document
+subtitle: "Trabalho 0 - Tutorial de RMarkdown"
+author: 
+  - "Nome completo Integrante 1"
+  - "Nome completo Integrante 2"
+---
+
+<!-- O trecho de código abaixo, faz a configuração de todos os 
+outros trechos de código. Ele não é apresentado no PDF final
+e não deve ser modificado -->
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = TRUE, error = FALSE, message = FALSE, 
+	warning = FALSE, tidy = FALSE, echo = TRUE)
+options(digits = 3)
+```
+
+Neste trabalho repetiremos a análise exploratória feita em sala
+sobre a base de dados `faithful`. 
+
+# Atividadade 1 -- Análise Inicial
+Nesta atividade, faça uma cópia da base de dados e visualize as 10
+primeiras linhas. Em seguida apresente o resumo da base com o comando 
+`summary`.
+
+``` {r atv1-code}
+# Fazendo uma cópia da base de dados
+base <- faithful
+
+# Visualizando as 10 primeiras linhas da base
+print(head(base))
+
+# Resumo da base de dados
+print(summary(base))
+
+```
+
+# Atividadade 2 -- Gráfico Duração vs. Espera
+Nesta Atividade, faça um gráfico com a duração de uma erupção no eixo
+$x$ e o tempo de espera entre erupções no eixo $y$  e responda ao item 
+a seguir.
+
+```{r atv2-code}
+duracao <- base$eruptions
+espera <- base$waiting
+
+plot(duracao, espera,
+     xlab = "Duracao da Erupcao",
+     ylab = "Tempo Esperado")
+```
+
+#### Análise 
+a) Analise o gráfico gerado, respondendo se existe alguma relação 
+entre esses dois valores. 
+
+*Resposta:* <!-- Escreva a resposta desse item na linha abaixo -->
+Sim, existe uma relaão entre as duas variáveis. Pelo gráfigo gerado podemos que quanto maior o tempo esperado, maior o tempo de duração da erupção
+
+<!-- Fim da resposta -->

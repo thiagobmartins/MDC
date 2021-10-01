@@ -1,0 +1,172 @@
+---
+title: INF0613 -- Aprendizado de Máquina Não Supervisionado
+output: pdf_document
+subtitle: Trabalho 1 - Regras de Associação
+author: 
+  - Nome completo Integrante 1
+  - Nome completo Integrante 2
+  - Nome completo Integrante 3
+---
+
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = TRUE, error = FALSE, message = FALSE, warning = FALSE, tidy = FALSE)
+options(digits = 3)
+```
+
+Neste primeiro trabalho vamos minerar Regras de Associação em uma base de dados que contém as vendas de uma padaria. A base de dados está disponível na página da disciplina no Moodle (arquivo `bakery.csv`).
+
+# Atividade 0 -- Configurando o ambiente
+Antes de começar a implementação do seu trabalho configure o _workspace_ e importe todos os pacotes:
+
+```{r atv0-code}
+# Adicione os demais pacotes usados
+# Bibliotecas usadas neste trabalho:
+library(arules)
+library(arulesViz)
+library(git2r)
+
+# Configurando ambiente de trabalho:
+ setwd("C:\\Users\\thiag\\OneDrive\\Documents\\Unicamp\\MDC\\Aprendizado-Nao-Supervisionado\\Trabalho 1")
+
+```
+
+
+# Atividade 1 -- Análise Exploratória da Base de Dados (*3,0 pts*)
+
+Dado um caminho para uma base de dados, leia as transações e faça uma análise Exploratória sobre elas. Use as funções `summary`,  `inspect` e `itemFrequencyPlot`. Na função `inspect` limite sua análise às 10 primeiras transações e na função `itemFrequencyPlot` gere um gráfico com a frequência relativa dos 30 itens mais frequentes. 
+
+```{r atv1-code}
+# Ler transações
+transacoes <- read.transactions(file.choose(), format = "basket", sep=",")
+
+# Visualizando transações
+inspect(transacoes[1:10])
+
+# Sumário da base
+summary(transacoes)
+
+# Analisando a frequência dos itens 
+itemFrequencyPlot(transacoes, topN=20, support=0.1)
+
+
+```
+
+
+## Análise 
+
+a) Descreva a base de dados discutindo os resultados das funções acima. 
+
+**Resposta:** <!-- Escreva sua resposta abaixo -->
+
+
+<!-- Fim da resposta -->
+
+b) Ao gerarmos o gráfico de frequências, temos uma representação visual de uma informação já presente no resultado da função `summary`. Contudo, esse gráfico nos dá uma visão mais ampla da base. Assim podemos ver a frequência de outros itens em relação aos 10 mais frequentes. Quais informações podemos obter a partir desse gráfico (e da análise anterior) para nos ajudar na extração de regras de associação com o algoritmo `apriori`? Isto é, como a frequência dos itens pode afetar os parâmetros de configuração do algoritmo `apriori`? 
+
+**Resposta:** <!-- Escreva sua resposta abaixo -->
+
+
+<!-- Fim da resposta -->
+
+# Atividade 2 -- Minerando Regras (*3,5 pts*)
+
+Use o algoritmo `apriori` para minerar regras na base de dados fornecida. Experimente com pelo menos *3 conjuntos* de valores diferentes de suporte e confiança para encontrar regras de associação. Imprima as cinco regras com o maior suporte de cada conjunto escolhido.  Lembre-se de usar seu conhecimento sobre a base, obtido na questão anterior, para a escolha dos valores de suporte e confiança.
+
+```{r atv2-code}
+# Conjunto 1: suporte =    e confiança =    
+#regras <- apriori ( transacoes ,parameter = list ( supp =0.01 , conf =0.6) )
+#regras <- sort(regras, by="confidence", ascending=TRUE)
+#inspect(regras)
+
+#plot ( regras , method ="graph")
+
+
+# Regras que implicam em salada
+regrasSalada <- apriori ( data=transacoes ,parameter = list ( supp =0.05 , conf =0.05) , 
+                    appearance = list ( default ="lhs", rhs ="Salad") ,
+                    control = list ( verbose = F))
+regrasSalada <- sort ( regras , decreasing = TRUE , by="confidence")
+inspect ( regrasSalada [1:5])
+plot(regrasSalada, method='graph')
+
+
+# Interpretacao da confianca. Se confianca = 0.7 pra Pao -> Leite
+# 70% das pessoas que compraram Pao, levaram Leite (não é simétrica)
+# No entanto, se as pessoas compraem muito leite sem pão,
+# A acurácia continua alta
+
+# Interpretação do Lift. Se lift = 3.2 para Pão -> Leite
+# As pessoas que compram pão tem 3x mais chances de comprar Leite
+# O lift diveite o suporte de (L u R)/ suporte (R)
+# Acho que isso quer dizer que se o suporte de R for grande sozinho, o lift diminui
+
+# O suporte mostra o quão frequente é aquele produto ou transacao
+# Mas para produtos caros, ou raros, não ajuda muito
+```
+
+## Análises 
+a) Quais as regras mais interessantes geradas a partir dessa base? Justifique.
+
+**Resposta:** <!-- Escreva sua resposta abaixo -->
+
+
+<!-- Fim da resposta -->
+
+# Atividade 3 -- Medidas de Interesse (*3,5 pts*)
+
+Vimos na aula que, mesmo após as podas do algoritmo `apriori`, ainda temos algumas regras com características indesejáveis como redundâncias e dependência estatística negativa. Também vimos algumas medidas que nos ajudam a analisar melhor essas regras como o lift, a convicção e a razão de chances. Nesta questão, escolha um dos conjuntos de regras geradas na atividade anterior e o analise usando essas medidas. Compute as três medidas para o conjunto escolhido com a função `interestMeasure` e experimente ordenar as regras com cada uma das novas medidas.
+
+
+```{r atv3-code}
+# Compute as medidas de interesse 
+
+
+# Apresente as regras ordenadas por lift
+
+# Apresente as regras ordenadas por convicção
+
+# Apresente as regras ordenadas por razão de chances
+
+plot( regras , measure = c("support", "confidence"), shading = "lift", interactive = FALSE )
+
+
+##### Verificar subconjunto de regras
+#meat.regras <- sort ( subset ( regras , subset = lhs % in % " beef " | 
+#                                   lhs % in % " sausage " | 
+#                                   lhs % in % " chicken "), by=" confidence ")
+#summary ( meat.regras )
+
+
+### Mapa de Árvores
+occur1 <- transacoes@itemInfo % >%
+group_by( level1 ) % >%
+summarize (n=n())
+
+#treemap ( occur1 , index =c(" level1 ") , vSize ="n",
+#title ="", palette =" Dark2 ", border . col ="# FFFFFF ")
+
+occur2 <- transacoes@itemInfo % >%
+  group_by( level1 , level2 ) % >%
+  summarize (n= n())
+
+  treemap ( occur2 , index =c("level1", "level2") , vSize ="n", 
+            title ="", palette ="Dark2", border.col ="# FFFFFF ")
+
+  
+  ### Varias medidas de interesse
+  
+  medidas <- interestMeasure ( regras , c(" confidence ", " conviction ", "coverage", 
+                                          "support", "oddsRatio", "leverage") , transacoes)
+
+```
+
+
+## Análise 
+a) Quais as regras mais interessantes do conjunto? Justifique.
+
+**Resposta:** <!-- Escreva sua resposta abaixo -->
+
+
+<!-- Fim da resposta -->
+
